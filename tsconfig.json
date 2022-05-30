@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
         "module": "es6",
-        "target": "ES2018",
+        "target": "ES2022",
         "moduleResolution": "node",
         "sourceMap": true,
         "noImplicitAny": true,
         "noEmit": false,
-        "strict": true
+        "strict": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "dist"
     },
     "include": ["src"]
 }

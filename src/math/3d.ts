@@ -61,6 +61,15 @@ export class Math3D {
     public static rotationMatrix(from: Vector3D, to: Vector3D): Matrix3D {
         const cross = Math3D.cross(from, to);
         const crossNorm = Math3D.norm(cross);
+
+        if (crossNorm === 0) {
+            return {
+                d00: 1, d01: 0, d02: 0,
+                d10: 0, d11: 1, d12: 0,
+                d20: 0, d21: 0, d22: 1
+            };
+        }
+
         const cos = Math3D.dot(from, to);
         const sin = crossNorm;
         const axis = {

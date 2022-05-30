@@ -46,7 +46,7 @@ export class PuzzlePiece extends Sprite {
         this.#progress = Math.random();
         this.#axis = Math.floor(Math.random() * 3);
 
-        this.#periodMs = Math.pow(Math.random(), 0.5) * 10000;
+        this.#periodMs = Math.pow(Math.random(), 0.5) * 20000;
         this.#periodMs += 10000;
 
         this.update(0);
@@ -61,8 +61,8 @@ export class PuzzlePiece extends Sprite {
         // Translate back to 2D transformation
         this.scale.x = Math.sqrt(transform3D.d00 * transform3D.d00 + transform3D.d10 * transform3D.d10);
         this.scale.y = Math.sqrt(transform3D.d01 * transform3D.d01 + transform3D.d11 * transform3D.d11);
-        this.skew.y = Math.atan2(transform3D.d10 / this.scale.x, transform3D.d00 / this.scale.x);
-        this.skew.x = -Math.atan2(transform3D.d11 / this.scale.y, -transform3D.d01 / this.scale.y);
+        this.skew.y = Math.atan2(transform3D.d10, transform3D.d00);
+        this.skew.x = -Math.atan2(-transform3D.d01, transform3D.d11);
     }
 
     get #dynamicTransform(): Matrix3D {
@@ -71,21 +71,21 @@ export class PuzzlePiece extends Sprite {
         const sin = Math.sin(radius);
         if (this.#axis === 0) {
             return {
-                d00: 0, d01: 0, d02: 0,
+                d00: 1, d01: 0, d02: 0,
                 d10: 0, d11: cos, d12: -sin,
                 d20: 0, d21: sin, d22: cos
             };
         } else if (this.#axis === 1) {
             return {
                 d00: cos, d01: 0, d02: sin,
-                d10: 0, d11: 0, d12: 0,
+                d10: 0, d11: 1, d12: 0,
                 d20: -sin, d21: 0, d22: cos
             };
         } else {
             return {
                 d00: cos, d01: -sin, d02: 0,
                 d10: sin, d11: cos, d12: 0,
-                d20: 0, d21: 0, d22: 0
+                d20: 0, d21: 0, d22: 1
             };
         }
     }
