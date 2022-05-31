@@ -46,7 +46,7 @@ export class PuzzlePiece extends Sprite {
         this.#progress = Math.random();
         this.#axis = Math.floor(Math.random() * 3);
 
-        this.#periodMs = Math.pow(Math.random(), 0.5) * 20000;
+        this.#periodMs = Math.pow(Math.random(), 0.25) * 30000;
         this.#periodMs += 10000;
 
         this.update(0);

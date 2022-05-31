@@ -1,0 +1,18 @@
+body {
+    background: #333;
+    margin: 0;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+#app canvas {
+    width: 100%;
+}
+
+#fps {
+    position: relative;
+    top: -25px;
+}

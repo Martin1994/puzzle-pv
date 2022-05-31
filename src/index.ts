@@ -1,19 +1,25 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Ticker } from "pixi.js";
 import { PuzzleApp } from "./app";
 
 async function main(): Promise<void> {
+    const WIDTH = 1920;
+    const HEIGHT = 1080;
+    const MSAA = 2;
+
     const recordingMode = location.search.indexOf("record") >= 0;
 
     Ticker.shared.autoStart = false;
 
-    const app = new PuzzleApp({ width: 1920, height: 1080, autoStart: !recordingMode });
+    const app = new PuzzleApp({ width: WIDTH * MSAA, height: HEIGHT * MSAA, autoStart: !recordingMode });
+    app.stage.scale.x = MSAA;
+    app.stage.scale.y = MSAA;
 
-    document.body.style.background = "#333";
     document.getElementById("app")?.appendChild(app.view);
-    app.view.style.width = "100%";
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const fpsCounter = document.getElementById("fps-counter")!;
+    fpsCounter.parentElement!.style.position = "relative";
+    fpsCounter.parentElement!.style.top = "-25px";
 
     await app.init();
 
@@ -77,8 +83,6 @@ async function record(fpsCounter: HTMLElement, app: PuzzleApp): Promise<void> {
         Ticker.shared.update(clock);
         clock += MSPF;
         frame++;
-
-        app.render();
 
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
 

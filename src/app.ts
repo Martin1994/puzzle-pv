@@ -10,7 +10,7 @@ export class PuzzleApp extends Application {
         await load();
         console.log("Assets have been loaded.");
 
-        this.stage.addChild(...[...this.#stageChildren(this.screen)].reverse());
+        this.stage.addChild(...[...this.#stageChildren(new Rectangle(0, 0, this.screen.width / this.stage.scale.x, this.screen.height / this.stage.scale.y))].reverse());
     }
 
     *#stageChildren(screen: Rectangle): Iterable<DisplayObject> {
