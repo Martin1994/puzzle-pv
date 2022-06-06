@@ -5,15 +5,12 @@ import { PuzzleApp } from "./app";
 async function main(): Promise<void> {
     const WIDTH = 1920;
     const HEIGHT = 1080;
-    const MSAA = 2;
 
     const recordingMode = location.search.indexOf("record") >= 0;
 
     Ticker.shared.autoStart = false;
 
-    const app = new PuzzleApp({ width: WIDTH * MSAA, height: HEIGHT * MSAA, autoStart: !recordingMode });
-    app.stage.scale.x = MSAA;
-    app.stage.scale.y = MSAA;
+    const app = new PuzzleApp({ width: WIDTH, height: HEIGHT, autoStart: !recordingMode, resolution: 2 });
 
     document.getElementById("app")?.appendChild(app.view);
 

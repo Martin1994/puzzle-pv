@@ -1,13 +1,13 @@
 import { GlowFilter } from "pixi-filters";
 import { Sprite, Ticker } from "pixi.js";
 import { texture } from "../assets";
-import { Math3D, Matrix3D } from "../math/3d";
+import { Math3D, Matrix3D, Vector3D } from "../math/3d";
 
 export class PuzzlePiece extends Sprite {
 
     readonly #periodMs: number;
     readonly #constantTransform: Matrix3D;
-    readonly #axis: number;
+    readonly #axis: Vector3D;
 
     #progress: number;
 
@@ -25,7 +25,7 @@ export class PuzzlePiece extends Sprite {
         this.filters = [new GlowFilter({ distance: 50, outerStrength: 2 })];
 
         // Position jitter
-        this.#constantTransform = Math3D.rotationMatrix({ x: 0, y: 0, z: 1 }, Math3D.randomSphere());
+        this.#constantTransform = Math3D.rotationMatrix(Math3D.randomSphere(), Math.random() * 2 * Math.PI);
 
         const scale = 0.15 * (1 + (Math.random() - 0.5) * 0.2);
         this.#constantTransform.d00 *= scale;
@@ -44,7 +44,7 @@ export class PuzzlePiece extends Sprite {
         this.y = offDistance * Math.sin(offRotation);
 
         this.#progress = Math.random();
-        this.#axis = Math.floor(Math.random() * 3);
+        this.#axis = Math3D.randomSphere();
 
         this.#periodMs = Math.pow(Math.random(), 0.25) * 30000;
         this.#periodMs += 10000;
@@ -67,26 +67,6 @@ export class PuzzlePiece extends Sprite {
 
     get #dynamicTransform(): Matrix3D {
         const radius = 2 * Math.PI * this.#progress;
-        const cos = Math.cos(radius);
-        const sin = Math.sin(radius);
-        if (this.#axis === 0) {
-            return {
-                d00: 1, d01: 0, d02: 0,
-                d10: 0, d11: cos, d12: -sin,
-                d20: 0, d21: sin, d22: cos
-            };
-        } else if (this.#axis === 1) {
-            return {
-                d00: cos, d01: 0, d02: sin,
-                d10: 0, d11: 1, d12: 0,
-                d20: -sin, d21: 0, d22: cos
-            };
-        } else {
-            return {
-                d00: cos, d01: -sin, d02: 0,
-                d10: sin, d11: cos, d12: 0,
-                d20: 0, d21: 0, d22: 1
-            };
-        }
+        return Math3D.rotationMatrix(this.#axis, radius);
     }
 }

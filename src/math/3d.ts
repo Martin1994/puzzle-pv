@@ -55,28 +55,12 @@ export class Math3D {
     }
 
     /**
-     * @param from Unit vector
-     * @param to Unit vector
+     * @param axis Unit vector of rotation axis
+     * @param radius Rotation radius
      */
-    public static rotationMatrix(from: Vector3D, to: Vector3D): Matrix3D {
-        const cross = Math3D.cross(from, to);
-        const crossNorm = Math3D.norm(cross);
-
-        if (crossNorm === 0) {
-            return {
-                d00: 1, d01: 0, d02: 0,
-                d10: 0, d11: 1, d12: 0,
-                d20: 0, d21: 0, d22: 1
-            };
-        }
-
-        const cos = Math3D.dot(from, to);
-        const sin = crossNorm;
-        const axis = {
-            x: cross.x / crossNorm,
-            y: cross.y / crossNorm,
-            z: cross.z / crossNorm
-        };
+    public static rotationMatrix(axis: Vector3D, radius: number): Matrix3D {
+        const cos = Math.cos(radius);
+        const sin = Math.sin(radius);
 
         // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
         return {
