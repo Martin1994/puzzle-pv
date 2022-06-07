@@ -1,6 +1,7 @@
 import { Enumerable } from "es2018-linq";
-import { Application, DisplayObject, Rectangle, Sprite } from "pixi.js";
+import { Application, Container, DisplayObject, Rectangle, Sprite } from "pixi.js";
 import { load, texture } from "./assets";
+import { FloatingPuzzlePiece } from "./display/floatingPuzzlePiece";
 import { OrbitalRing } from "./display/orbitalRing";
 import { PuzzlePiece } from "./display/puzzlePiece";
 
@@ -16,21 +17,20 @@ export class PuzzleApp extends Application {
     *#stageChildren(screen: Rectangle): Iterable<DisplayObject> {
         const mikuScale = 0.3;
 
-        const centrePuzzle = new Sprite(texture("puzzle-centre"));
-        centrePuzzle.anchor.set(0.5);
-        centrePuzzle.scale.set(mikuScale, mikuScale);
-        centrePuzzle.x = screen.width / 2;
-        centrePuzzle.y = screen.height / 2;
-        yield centrePuzzle;
+        const centrePiece = new FloatingPuzzlePiece();
+        centrePiece.scale.set(mikuScale, mikuScale);
+        centrePiece.x = screen.width * (0.5 - 0.0395);
+        centrePiece.y = screen.height * (0.5 - 0.3255);
+        yield centrePiece;
 
-        const centrePuzzleGlow = new Sprite(texture("puzzle-centre-glow"));
-        centrePuzzleGlow.anchor.set(0.5);
-        centrePuzzleGlow.scale.set(mikuScale, mikuScale);
-        centrePuzzleGlow.x = screen.width / 2;
-        centrePuzzleGlow.y = screen.height / 2;
-        yield centrePuzzleGlow;
-
-        const puzzleRing = new OrbitalRing(Enumerable.range(0, 500).select(_ => new PuzzlePiece()).toArray(), {
+        const totalPieces = 400;
+        const puzzleRing = new OrbitalRing(Enumerable.range(0, 400).select(i => {
+            const container = new Container();
+            const piece = new PuzzlePiece(i / totalPieces);
+            container.addChild(piece.glow);
+            container.addChild(piece);
+            return container;
+        }).toArray(), {
             a: { x: -600, y: -200, z: 0 },
             b: { x: -100, y: 100, z: -600 },
             c: { x: 0, y: 0, z: 0 },

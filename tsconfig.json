@@ -10,5 +10,12 @@
         "allowSyntheticDefaultImports": true,
         "outDir": "dist"
     },
-    "include": ["src"]
+    "include": ["src"],
+    "exclude": ["src/preprocessor"],
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        },
+        "exclude": []
+    }
 }

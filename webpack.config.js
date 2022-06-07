@@ -19,8 +19,10 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: "ts-loader",
-                exclude: /node_modules/,
-            },
+                exclude: [
+                    path.resolve(__dirname, "node_modules")
+                ]
+            }
         ],
     },
     resolve: {
@@ -29,5 +31,8 @@ module.exports = {
     output: {
         filename: "scripts/index.js",
         path: path.resolve(__dirname, "static"),
+    },
+    optimization: {
+        usedExports: true
     }
 };

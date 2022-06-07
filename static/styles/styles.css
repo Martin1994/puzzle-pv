@@ -13,6 +13,7 @@ body::-webkit-scrollbar {
 }
 
 #fps {
-    position: relative;
-    top: -25px;
+    position: fixed;
+    bottom: 0;
+    font-family: monospace;
 }
