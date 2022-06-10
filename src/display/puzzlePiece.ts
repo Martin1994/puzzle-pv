@@ -1,7 +1,6 @@
 // import { GlowFilter } from "pixi-filters";
 import { BLEND_MODES, Sprite, Ticker } from "pixi.js";
-import { binary, texture } from "../assets";
-import { FFT_WINDOW, FRAME_RATE } from "../config";
+import { texture } from "../assets";
 import { Math3D, Matrix3D, Vector3D } from "../math/3d";
 
 export class PuzzlePiece extends Sprite {
@@ -9,25 +8,17 @@ export class PuzzlePiece extends Sprite {
     readonly #periodMs: number;
     readonly #constantTransform: Matrix3D;
     readonly #axis: Vector3D;
-    readonly #volumeInBand: Float32Array;
-    readonly #band: number;
 
     #progress: number;
 
     public readonly glow: Sprite;
 
-    public constructor(position: number, autoUpdate: boolean = true) {
+    public constructor(autoUpdate: boolean = true) {
         super(texture("puzzle-piece"));
 
         if (autoUpdate) {
-            Ticker.shared.add(_delta => {
-                this.updateDelta(Ticker.shared.deltaMS);
-                this.updateElapsed(Ticker.shared.lastTime);
-            }, this);
+            Ticker.shared.add(_delta => this.updateDelta(Ticker.shared.deltaMS), this);
         }
-
-        this.#band = 1 + Math.floor(position * 0.4 * FFT_WINDOW / 2);
-        this.#volumeInBand = new Float32Array(binary("volume-in-band"));
 
         this.anchor.x = 0.5;
         this.anchor.y = 0.5;
@@ -86,32 +77,8 @@ export class PuzzlePiece extends Sprite {
         this.skew.x = -Math.atan2(-transform3D.d01, transform3D.d11);
     }
 
-    public updateElapsed(elapsedMs: number): void {
-        const frame = Math.floor(elapsedMs / 1000 * FRAME_RATE);
-        const volume = this.#volumeInBand[frame * FFT_WINDOW / 2 + this.#band];
-        this.#brightness = (Math.log(volume) - 15) / 25;
-
-        const log = Math.log(volume);
-        // eslint-disable-next-line
-        if (!(Math.max((window as any)["maxV"], log) > log)) {
-            // eslint-disable-next-line
-            (window as any)["maxV"] = log;
-        }
-    }
-
     get #dynamicTransform(): Matrix3D {
         const radius = 2 * Math.PI * this.#progress;
         return Math3D.rotationMatrix(this.#axis, radius);
-    }
-
-    set #brightness(level: number) {
-        if (level < 0) {
-            level = 0;
-        }
-        if (level > 1) {
-            level = 1;
-        }
-
-        this.glow.alpha = 0.05 + 0.5 * level;
     }
 }

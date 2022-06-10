@@ -23,10 +23,9 @@ export class PuzzleApp extends Application {
         centrePiece.y = screen.height * (0.5 - 0.3255);
         yield centrePiece;
 
-        const totalPieces = 400;
-        const puzzleRing = new OrbitalRing(Enumerable.range(0, 400).select(i => {
+        const puzzleRing = new OrbitalRing(Enumerable.range(0, 400).select(_ => {
             const container = new Container();
-            const piece = new PuzzlePiece(i / totalPieces);
+            const piece = new PuzzlePiece();
             container.addChild(piece.glow);
             container.addChild(piece);
             return container;
