@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Ticker } from "pixi.js";
 import { PuzzleApp } from "./app";
+import { audio } from "./assets";
 import { FRAME_RATE } from "./config";
 
 async function main(): Promise<void> {
@@ -10,18 +11,27 @@ async function main(): Promise<void> {
     const recordingMode = location.search.indexOf("record") >= 0;
 
     Ticker.shared.autoStart = false;
+    Ticker.shared.minFPS = 0;
 
     const app = new PuzzleApp({ width: WIDTH, height: HEIGHT, resolution: 2 });
 
-    document.getElementById("app")?.appendChild(app.view);
+    const appElement = document.getElementById("app")!;
 
-    const fpsCounter = document.getElementById("fps-counter")!;
+    appElement.appendChild(app.view);
 
     await app.init();
+
+    await new Promise<void>(resolve => appElement.addEventListener("click", function start() {
+        appElement.removeEventListener("click", start);
+        resolve();
+    }));
+
+    const fpsCounter = document.getElementById("fps-counter")!;
 
     if (recordingMode) {
         await record(fpsCounter);
     } else {
+        await audio("puzzle-music").play();
         play(fpsCounter);
     }
 }
@@ -57,7 +67,7 @@ function play(fpsCounter: HTMLElement): void {
     let lastUpdate = 0;
     Ticker.shared.add(() => {
         const now = performance.now();
-        if (now - lastUpdate < 1000) {
+        if (now - lastUpdate < 100) {
             return;
         }
         lastUpdate = now;
@@ -67,4 +77,3 @@ function play(fpsCounter: HTMLElement): void {
 }
 
 void main();
-

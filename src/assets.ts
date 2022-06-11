@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Loader, LoaderResource, Texture } from "pixi.js";
 import { inflate } from "pako";
+import { from } from "es2018-linq";
+import { Sound, SoundLoader } from "@pixi/sound";
 
 const textureList = {
     "background": "bg.png",
@@ -16,14 +18,25 @@ const binaryList = {
     "volume-in-band": "puzzle.volume-in-band.gz"
 } as const;
 
-type AssetKey = TextureKey | BinaryKey;
+const audioList = {
+    "puzzle-music": "puzzle.mp3"
+} as const;
+
+const textList = {
+    "puzzle-lyrics": "puzzle.lrc"
+} as const;
+
+type AssetKey = TextureKey | BinaryKey | AudioKey | TextKey;
 type TextureKey = keyof typeof textureList;
 type BinaryKey = keyof typeof binaryList;
+type AudioKey = keyof typeof audioList;
+type TextKey = keyof typeof textList;
 
 const loader = new Loader();
+SoundLoader.add();
 
-for (const textureKey of Object.keys(textureList)) {
-    loader.add(textureKey, `assets/${textureList[textureKey as TextureKey]}`);
+for (const assetEntry of from([textureList, audioList, textList]).selectMany(list => Object.entries(list))) {
+    loader.add(assetEntry[0], `assets/${assetEntry[1]}`);
 }
 
 for (const binaryKey of Object.keys(binaryList)) {
@@ -63,4 +76,18 @@ export function binary(key: BinaryKey): ArrayBuffer {
         throw new Error("Application is still loading assets.");
     }
     return resources[key].data as ArrayBuffer;
+}
+
+export function audio(key: AudioKey): Sound {
+    if (!resources) {
+        throw new Error("Application is still loading assets.");
+    }
+    return resources[key].sound!;
+}
+
+export function text(key: TextKey): string {
+    if (!resources) {
+        throw new Error("Application is still loading assets.");
+    }
+    return resources[key].data as string;
 }

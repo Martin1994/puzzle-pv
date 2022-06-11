@@ -1,7 +1,8 @@
 import { Enumerable } from "es2018-linq";
 import { Application, Container, DisplayObject, Rectangle, Sprite } from "pixi.js";
-import { load, texture } from "./assets";
+import { load, text, texture } from "./assets";
 import { FloatingPuzzlePiece } from "./display/floatingPuzzlePiece";
+import { Lyrics } from "./display/lyrics";
 import { OrbitalRing } from "./display/orbitalRing";
 import { PuzzlePiece } from "./display/puzzlePiece";
 
@@ -16,6 +17,11 @@ export class PuzzleApp extends Application {
 
     *#stageChildren(screen: Rectangle): Iterable<DisplayObject> {
         const mikuScale = 0.3;
+
+        const lyrics = new Lyrics(text("puzzle-lyrics"));
+        lyrics.x = screen.width * 0.9;
+        lyrics.y = screen.height * 0.9;
+        yield lyrics;
 
         const centrePiece = new FloatingPuzzlePiece();
         centrePiece.scale.set(mikuScale, mikuScale);

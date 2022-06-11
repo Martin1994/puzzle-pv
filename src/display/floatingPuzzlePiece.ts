@@ -4,17 +4,22 @@ import { BPM, FRAME_RATE } from "../config";
 
 export class FloatingPuzzlePiece extends Container {
 
+    static readonly #GLOW_HALFLIFE_MS = 100;
+    static readonly #GLOW_HALFLIFE_POW = Math.exp(Math.log(0.5) / FloatingPuzzlePiece.#GLOW_HALFLIFE_MS)
+
     readonly #piece: Sprite;
     readonly #glow: Sprite;
     readonly #volume: Float32Array;
 
     readonly #periodMs = 8 * FRAME_RATE * 1000 / BPM;
 
+    #elapsedMs: number = 0;
+
     public constructor(autoUpdate: boolean = true) {
         super();
 
         if (autoUpdate) {
-            Ticker.shared.add(_delta => this.update(Ticker.shared.lastTime), this);
+            Ticker.shared.add(_delta => this.update(Ticker.shared.deltaMS), this);
         }
 
         this.#volume = new Float32Array(binary("volume"));
@@ -30,15 +35,21 @@ export class FloatingPuzzlePiece extends Container {
         this.addChild(this.#piece);
     }
 
-    public update(elapsedMs: number): void {
-        const progress = elapsedMs / this.#periodMs;
+    public update(deltaMs: number): void {
+        this.#elapsedMs += deltaMs;
+        const progress = this.#elapsedMs / this.#periodMs;
         const progressRad = (progress - Math.floor(progress)) * 2 * Math.PI;
 
         this.#piece.rotation = Math.cos(progressRad) * 0.04;
         this.#piece.y = Math.sin(progressRad) * 12;
         this.#glow.y = this.#piece.y;
 
-        const frame = Math.floor(elapsedMs / 1000 * FRAME_RATE);
-        this.#glow.alpha = (Math.log(this.#volume[frame]) - 15) / 30;
+        const frame = Math.floor(this.#elapsedMs / 1000 * FRAME_RATE);
+        const targetAlpha = (Math.log(this.#volume[frame]) - 15) / 25;
+        if (targetAlpha < this.#glow.alpha) {
+            this.#glow.alpha = targetAlpha + (this.#glow.alpha - targetAlpha) * Math.pow(FloatingPuzzlePiece.#GLOW_HALFLIFE_POW, deltaMs);
+        } else {
+            this.#glow.alpha = targetAlpha;
+        }
     }
 }
