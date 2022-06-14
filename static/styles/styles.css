@@ -1,11 +1,23 @@
 body {
-    background: #333;
+    background: #ccc;
     margin: 0;
     scrollbar-width: none;
 }
 
 body::-webkit-scrollbar {
     display: none;
+}
+
+#play-btn {
+    appearance: none;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    color: #ccc;
+    font-size: xx-large;
+    text-shadow: 1px 1px #333;
 }
 
 #app canvas {
@@ -16,4 +28,5 @@ body::-webkit-scrollbar {
     position: fixed;
     bottom: 0;
     font-family: monospace;
+    color: #333;
 }

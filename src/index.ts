@@ -15,14 +15,15 @@ async function main(): Promise<void> {
 
     const app = new PuzzleApp({ width: WIDTH, height: HEIGHT, resolution: 2 });
 
-    const appElement = document.getElementById("app")!;
-
-    appElement.appendChild(app.view);
+    document.getElementById("app")!.appendChild(app.view);
 
     await app.init();
 
-    await new Promise<void>(resolve => appElement.addEventListener("click", function start() {
-        appElement.removeEventListener("click", start);
+    const playButton = document.getElementById("play-btn")!;
+    playButton.innerText = "Click to play";
+    await new Promise<void>(resolve => playButton.addEventListener("click", function start() {
+        playButton.removeEventListener("click", start);
+        playButton.style.visibility = "hidden";
         resolve();
     }));
 
