@@ -8,7 +8,10 @@ async function main(): Promise<void> {
     const WIDTH = 1920;
     const HEIGHT = 1080;
 
-    const recordingMode = location.search.indexOf("record") >= 0;
+    const search = new URLSearchParams(location.search);
+
+    const recordingMode = search.has("record");
+    const skip = parseFloat(search.get("skip") ?? "0");
 
     Ticker.shared.autoStart = false;
     Ticker.shared.minFPS = 0;
@@ -30,18 +33,17 @@ async function main(): Promise<void> {
     const fpsCounter = document.getElementById("fps-counter")!;
 
     if (recordingMode) {
-        await record(fpsCounter);
+        await record(skip, fpsCounter);
     } else {
-        await audio("puzzle-music").play();
-        play(fpsCounter);
+        await play(skip, fpsCounter);
     }
 }
 
-async function record(fpsCounter: HTMLElement): Promise<void> {
+async function record(skip:number, fpsCounter: HTMLElement): Promise<void> {
     const MSPF = 1000 / FRAME_RATE;
 
     let frame = 0;
-    let clock = 0;
+    let clock = Ticker.shared.lastTime = skip * 1000;
 
     let lastFpsFrame = 0;
     let lastUpdate = 0;
@@ -64,7 +66,7 @@ async function record(fpsCounter: HTMLElement): Promise<void> {
     }
 }
 
-function play(fpsCounter: HTMLElement): void {
+async function play(skip: number, fpsCounter: HTMLElement): Promise<void> {
     let lastUpdate = 0;
     Ticker.shared.add(() => {
         const now = performance.now();
@@ -74,7 +76,11 @@ function play(fpsCounter: HTMLElement): void {
         lastUpdate = now;
         fpsCounter.innerText = Ticker.shared.FPS.toFixed(2);
     });
+    await audio("puzzle-music").play({
+        start: skip
+    });
     Ticker.shared.start();
+    Ticker.shared.lastTime = performance.now() - skip * 1000;
 }
 
 void main();
