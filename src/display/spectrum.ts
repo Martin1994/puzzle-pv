@@ -1,4 +1,5 @@
 import { Enumerable } from "es2018-linq";
+import { GlowFilter } from "pixi-filters";
 import { Container, DisplayObject, Graphics, Ticker } from "pixi.js";
 import { binary } from "../assets";
 import { FFT_WINDOW, FRAME_RATE, SAMPLE_RATE } from "../config";
@@ -12,7 +13,7 @@ export class Spectrum extends Container {
 
     static readonly #SPECTRUM_SIZE = FFT_WINDOW / 2;
 
-    static readonly #BAR_HALFLIFE_MS = 67;
+    static readonly #BAR_HALFLIFE_MS = 30;
     static readonly #BAR_HALFLIFE_POW = Math.exp(Math.log(0.5) / Spectrum.#BAR_HALFLIFE_MS);
 
     public constructor(frequencyStart: number, frequencyEnd: number, autoUpdate: boolean = true) {
@@ -30,11 +31,12 @@ export class Spectrum extends Container {
             }
 
             const bar = new Graphics();
+            bar.filters = [new GlowFilter({ distance: 20, outerStrength: 1.5 })];
 
             bar.beginFill(0x1e768d);
-            bar.drawRect(-1, 0.5, 2, -1);
+            bar.drawRect(-1, -1, 2, 2);
 
-            bar.x = i * 5;
+            bar.x = i * 10;
 
             this.addChild(bar);
             return bar;
@@ -55,7 +57,7 @@ export class Spectrum extends Container {
             }
 
             const volume = this.#volumeInBand[offset + i];
-            const targetHeight = Math.max(0, (Math.log(volume) - 15 / 25));
+            const targetHeight = Math.max(0, (Math.log(volume) - 5) * 0.75);
             const currentHeight = bar.scale.y;
             if (targetHeight < currentHeight) {
                 bar.scale.y = targetHeight + (currentHeight - targetHeight) * Math.pow(Spectrum.#BAR_HALFLIFE_POW, deltaMs);

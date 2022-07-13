@@ -1,9 +1,10 @@
 import { Container, Text, TextStyle, Ticker } from "pixi.js";
+import { BPM } from "../config";
 
 export class Lyrics extends Container {
 
     static readonly #LINE_MATCHER = /\[(\d\d)\:(\d\d)\.(\d\d)\](.*)/;
-    static readonly #TRANSITION_MS = 500;
+    static readonly #TRANSITION_MS = 60 / BPM * 1000;
 
     readonly #lines: string[] = [];
     readonly #timestamps: number[] = [];
@@ -55,6 +56,7 @@ export class Lyrics extends Container {
             dropShadowBlur: 10,
             dropShadowAngle: 0,
             dropShadowDistance: 0,
+            padding: 10,
             wordWrap: false
         });
         const text = new Text("", style);
