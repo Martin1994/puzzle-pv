@@ -10,7 +10,8 @@ const textureList = {
     "puzzle-centre-glow": "puzzle-centre-glow.png",
     "puzzle-centre": "puzzle-centre.png",
     "puzzle-piece": "puzzle-piece.png",
-    "puzzle-piece-glow": "puzzle-piece-glow.png"
+    "puzzle-piece-glow": "puzzle-piece-glow.png",
+    "presents": "presents.png",
 } as const;
 
 const binaryList = {

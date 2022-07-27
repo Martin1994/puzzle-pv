@@ -1,4 +1,5 @@
-import { Enumerable } from "es2018-linq";
+import { Enumerable, from } from "es2018-linq";
+import { GlowFilter } from "pixi-filters";
 import { Application, Container, DisplayObject, Rectangle, Sprite } from "pixi.js";
 import { load, text, texture } from "./assets";
 import { Clip } from "./display/clip";
@@ -14,12 +15,15 @@ export class PuzzleApp extends Application {
         await load();
         console.log("Assets have been loaded.");
 
-        this.stage.addChild(...[...this.#stageChildren(this.screen)].reverse());
+        this.stage.addChild(...from(this.#stageChildren(this.screen)).reverse());
     }
 
     *#stageChildren(screen: Rectangle): Iterable<DisplayObject> {
-        const mikuScale = 0.3;
+        yield* this.#lyricSection(screen);
+        yield* this.#background(screen);
+    }
 
+    *#lyricSection(screen: Rectangle): Iterable<DisplayObject> {
         const spectrum = new Clip(111200, 155000);
         spectrum.addChild(new Spectrum(100, 2000));
         spectrum.x = screen.width * 0.9 - 450;
@@ -30,6 +34,22 @@ export class PuzzleApp extends Application {
         lyrics.x = screen.width * 0.9;
         lyrics.y = screen.height * 0.9;
         yield lyrics;
+
+        const presentsClip = new Clip(248000, Infinity);
+        const presents = new Sprite(texture("presents"));
+        presents.scale.x = 0.7;
+        presents.scale.y = 0.7;
+        presents.anchor.x = 1;
+        presents.anchor.y = 0.5;
+        presents.filters = [new GlowFilter({ distance: 7, outerStrength: 3, color: 0xffffff })];
+        presentsClip.addChild(presents);
+        presentsClip.x = screen.width * 0.9;
+        presentsClip.y = screen.height * 0.85;
+        yield presentsClip;
+    }
+
+    *#background(screen: Rectangle): Iterable<DisplayObject> {
+        const mikuScale = 0.3;
 
         const centrePiece = new FloatingPuzzlePiece();
         centrePiece.scale.set(mikuScale, mikuScale);

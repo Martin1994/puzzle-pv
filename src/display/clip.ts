@@ -1,8 +1,9 @@
 import { Container, Ticker } from "pixi.js";
+import { BPM } from "../config";
 
 export class Clip extends Container {
 
-    static readonly #TRANSITION_MS = 500;
+    public static readonly TRANSITION_MS = 60 / BPM * 1000;
 
     readonly #startMs: number;
     readonly #endMs: number;
@@ -34,8 +35,8 @@ export class Clip extends Container {
         this.visible = true;
         this.alpha = Math.min(
             1,
-            (this.#elapsedMs - this.#startMs) / Clip.#TRANSITION_MS,
-            (this.#endMs - this.#elapsedMs) / Clip.#TRANSITION_MS
+            (this.#elapsedMs - this.#startMs) / Clip.TRANSITION_MS,
+            (this.#endMs - this.#elapsedMs) / Clip.TRANSITION_MS
         );
     }
 
