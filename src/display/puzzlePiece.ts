@@ -1,4 +1,4 @@
-// import { GlowFilter } from "pixi-filters";
+import { GlowFilter } from "pixi-filters";
 import { BLEND_MODES, Sprite, Ticker } from "pixi.js";
 import { texture } from "../assets";
 import { Math3D, Matrix3D, Vector3D } from "../math/3d";
@@ -11,9 +11,9 @@ export class PuzzlePiece extends Sprite {
 
     #progress: number;
 
-    public readonly glow: Sprite;
+    public readonly glow?: Sprite;
 
-    public constructor(autoUpdate: boolean = true) {
+    public constructor(realtime: boolean, autoUpdate: boolean = true) {
         super(texture("puzzle-piece"));
 
         if (autoUpdate) {
@@ -52,16 +52,19 @@ export class PuzzlePiece extends Sprite {
         this.updateDelta(0);
 
         // Glow
-        // this.filters = [new GlowFilter({ distance: 50, outerStrength: 2 })];
-        this.glow = new Sprite(texture("puzzle-piece-glow"));
-        this.glow.anchor.x = 0.5;
-        this.glow.anchor.y = 0.5;
-        this.glow.scale.x = scale / 2;
-        this.glow.scale.y = scale / 2;
-        this.glow.x = this.x;
-        this.glow.y = this.y;
-        this.glow.blendMode = BLEND_MODES.NORMAL;
-        this.glow.alpha = 0.1;
+        if (realtime) {
+            this.glow = new Sprite(texture("puzzle-piece-glow"));
+            this.glow.anchor.x = 0.5;
+            this.glow.anchor.y = 0.5;
+            this.glow.scale.x = scale / 2;
+            this.glow.scale.y = scale / 2;
+            this.glow.x = this.x;
+            this.glow.y = this.y;
+            this.glow.blendMode = BLEND_MODES.NORMAL;
+            this.glow.alpha = 0.1;
+        } else {
+            this.filters = [new GlowFilter({ distance: 50, outerStrength: 2 })];
+        }
     }
 
     public updateDelta(deltaMs: number): void {

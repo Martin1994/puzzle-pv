@@ -1,6 +1,6 @@
 import { Enumerable, from } from "es2018-linq";
 import { GlowFilter } from "pixi-filters";
-import { Application, Container, DisplayObject, Rectangle, Sprite } from "pixi.js";
+import { Application, Container, DisplayObject, IApplicationOptions, Rectangle, Sprite } from "pixi.js";
 import { load, text, texture } from "./assets";
 import { Clip } from "./display/clip";
 import { FloatingPuzzlePiece } from "./display/floatingPuzzlePiece";
@@ -9,7 +9,19 @@ import { OrbitalRing } from "./display/orbitalRing";
 import { PuzzlePiece } from "./display/puzzlePiece";
 import { Spectrum } from "./display/spectrum";
 
+export interface IPuzzleAppOptions extends IApplicationOptions {
+    realtime: boolean
+}
+
 export class PuzzleApp extends Application {
+
+    readonly #realtime: boolean;
+
+    public constructor(options?: IPuzzleAppOptions) {
+        super(options);
+
+        this.#realtime = options?.realtime ?? true;
+    }
 
     public async init(): Promise<void> {
         await load();
@@ -59,8 +71,10 @@ export class PuzzleApp extends Application {
 
         const puzzleRing = new OrbitalRing(Enumerable.range(0, 400).select(_ => {
             const container = new Container();
-            const piece = new PuzzlePiece();
-            container.addChild(piece.glow);
+            const piece = new PuzzlePiece(this.#realtime);
+            if (piece.glow) {
+                container.addChild(piece.glow);
+            }
             container.addChild(piece);
             return container;
         }).toArray(), {

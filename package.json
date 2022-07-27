@@ -6,7 +6,8 @@
     "scripts": {
         "build": "eslint . && webpack",
         "dev": "webpack serve -c webpack.config.js",
-        "preprocess": "ts-node src/preprocessor/processAudio"
+        "preprocess": "ts-node src/preprocessor/processAudio",
+        "record": "electron -r ts-node/register ./src/recorder/record.ts"
     },
     "dependencies": {
         "@pixi/sound": "^4.2.0",
@@ -21,6 +22,7 @@
         "@types/ooura": "^2.1.0",
         "@types/pako": "^2.0.0",
         "@typescript-eslint/eslint-plugin": "^5.17.0",
+        "electron": "^19.0.9",
         "eslint": "^8.6.0",
         "eslint-plugin-import": "^2.25.4",
         "ooura": "^2.1.6",

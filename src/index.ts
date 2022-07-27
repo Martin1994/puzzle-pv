@@ -16,7 +16,12 @@ async function main(): Promise<void> {
     Ticker.shared.autoStart = false;
     Ticker.shared.minFPS = 0;
 
-    const app = new PuzzleApp({ width: WIDTH, height: HEIGHT, resolution: 2 });
+    const app = new PuzzleApp({
+        width: WIDTH,
+        height: HEIGHT,
+        resolution: 2,
+        realtime: !recordingMode
+    });
 
     document.getElementById("app")!.appendChild(app.view);
 
@@ -40,6 +45,9 @@ async function main(): Promise<void> {
 }
 
 async function record(skip:number, fpsCounter: HTMLElement): Promise<void> {
+    const { spawn } = await import("child_process");
+    console.log(spawn);
+
     const MSPF = 1000 / FRAME_RATE;
 
     let frame = 0;

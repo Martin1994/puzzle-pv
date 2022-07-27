@@ -25,6 +25,10 @@ module.exports = {
             }
         ],
     },
+    externals: [
+        'child_process'
+    ],
+    externalsType: 'commonjs',
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
@@ -33,6 +37,7 @@ module.exports = {
         path: path.resolve(__dirname, "static"),
     },
     optimization: {
-        usedExports: true
+        usedExports: true,
+        minimize: true
     }
 };
