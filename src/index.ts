@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Ticker } from "pixi.js";
+import { Application, Renderer, Ticker } from "pixi.js";
 import { PuzzleApp } from "./app";
-import { audio } from "./assets";
+import { audio, binary } from "./assets";
 import { FRAME_RATE } from "./config";
 
+const WIDTH = 1920;
+const HEIGHT = 1080;
+const RESOLUTION = 2;
+
 async function main(): Promise<void> {
-    const WIDTH = 1920;
-    const HEIGHT = 1080;
 
     const search = new URLSearchParams(location.search);
 
@@ -19,8 +21,9 @@ async function main(): Promise<void> {
     const app = new PuzzleApp({
         width: WIDTH,
         height: HEIGHT,
-        resolution: 2,
-        realtime: !recordingMode
+        resolution: RESOLUTION,
+        realtime: !recordingMode,
+        preserveDrawingBuffer: recordingMode
     });
 
     document.getElementById("app")!.appendChild(app.view);
@@ -38,15 +41,37 @@ async function main(): Promise<void> {
     const fpsCounter = document.getElementById("fps-counter")!;
 
     if (recordingMode) {
-        await record(skip, fpsCounter);
+        await record(skip, fpsCounter, app);
     } else {
         await play(skip, fpsCounter);
     }
 }
 
-async function record(skip:number, fpsCounter: HTMLElement): Promise<void> {
+async function record(skip:number, fpsCounter: HTMLElement, app: Application): Promise<void> {
     const { spawn } = await import("child_process");
-    console.log(spawn);
+
+    const encoder = spawn("ffmpeg", [
+        "-y", // Always override output
+        "-f", "rawvideo",
+        "-pix_fmt", "rgba",
+        "-video_size", `${WIDTH * RESOLUTION}x${HEIGHT * RESOLUTION}`,
+        "-r", `${FRAME_RATE}`,
+        "-i", "pipe:0",
+        "-c:v", "libx264",
+        "-crf", "18",
+        "-pix_fmt", "yuv420p",
+        "-tune", "animation",
+        "-preset", "veryslow",
+        "-vf", `scale=${WIDTH}:${HEIGHT},vflip`, // downscale + webgl's y axis is flipped
+        "output.mp4"
+    ], { stdio: ["pipe", "inherit", "inherit"] });
+
+    const encoderEnd = new Promise(resolve => encoder.once("close", resolve));
+
+    const frameStream = encoder.stdin;
+    if (!frameStream) {
+        throw new Error("ffmpeg does not have stdin exposed.");
+    }
 
     const MSPF = 1000 / FRAME_RATE;
 
@@ -65,13 +90,34 @@ async function record(skip:number, fpsCounter: HTMLElement): Promise<void> {
         lastUpdate = now;
     });
 
-    while (true) {
+    const totalFrame = new Float32Array(binary("volume")).length;
+
+    const renderer = app.renderer;
+    if (!(renderer instanceof Renderer)) {
+        throw new Error("Renderer must be used");
+    }
+    const gl = renderer.gl;
+
+    const screenBuffer = new Uint8Array(HEIGHT * RESOLUTION * WIDTH * RESOLUTION * 4);
+
+    let previousFrameEncoded: Promise<void> = Promise.resolve();
+
+    while (frame < totalFrame) {
         Ticker.shared.update(clock);
         clock += MSPF;
         frame++;
 
+        await previousFrameEncoded;
+        gl.readPixels(0, 0, WIDTH * RESOLUTION, HEIGHT * RESOLUTION, gl.RGBA, gl.UNSIGNED_BYTE, screenBuffer);
+        previousFrameEncoded = new Promise<void>((resolve, reject) => frameStream.write(screenBuffer, error => error ? reject(error) : resolve()));
+
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
     }
+
+    await previousFrameEncoded;
+    await encoderEnd;
+
+    console.log("Encoder finished.");
 }
 
 async function play(skip: number, fpsCounter: HTMLElement): Promise<void> {

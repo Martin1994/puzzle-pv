@@ -37,7 +37,6 @@ module.exports = {
         path: path.resolve(__dirname, "static"),
     },
     optimization: {
-        usedExports: true,
-        minimize: true
+        usedExports: true
     }
 };
