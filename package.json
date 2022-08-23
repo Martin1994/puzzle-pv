@@ -12,7 +12,6 @@
     "dependencies": {
         "@pixi/sound": "^4.2.0",
         "es2018-linq": "^1.0.0",
-        "pako": "^2.0.4",
         "pixi-filters": "^4.1.6",
         "pixi.js": "^6.3.2"
     },
@@ -22,7 +21,7 @@
         "@types/ooura": "^2.1.0",
         "@types/pako": "^2.0.0",
         "@typescript-eslint/eslint-plugin": "^5.17.0",
-        "electron": "^19.0.9",
+        "electron": "^20.0.3",
         "eslint": "^8.6.0",
         "eslint-plugin-import": "^2.25.4",
         "ooura": "^2.1.6",

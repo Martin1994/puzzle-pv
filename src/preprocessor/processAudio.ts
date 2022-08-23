@@ -1,6 +1,5 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import * as zlib from "zlib";
 import { pipeline } from "stream/promises";
 import { createWriteStream } from "fs";
 import { Readable } from "stream";
@@ -33,8 +32,8 @@ async function main(): Promise<void> {
         frame++;
     }
 
-    await saveZip(path.join(ASSETS_DIR, "puzzle.volume.gz"), volume);
-    await saveZip(path.join(ASSETS_DIR, "puzzle.volume-in-band.gz"), volumeInBand);
+    await saveBin(path.join(ASSETS_DIR, "puzzle.volume.bin"), volume);
+    await saveBin(path.join(ASSETS_DIR, "puzzle.volume-in-band.bin"), volumeInBand);
 }
 
 function* iterateSpectrumPerFrame(audio: Float64Array): Iterable<Float64Array> {
@@ -78,16 +77,12 @@ function getVolumeInBand(spectrum: Float64Array, volumeInBand: Float32Array): vo
     }
 }
 
-async function saveZip(filePath: string, content: Float32Array): Promise<void> {
+async function saveBin(filePath: string, content: Float32Array): Promise<void> {
     const source = new Readable();
     source.push(new Uint8Array(content.buffer));
     source.push(null);
 
-    const gz = zlib.createGzip({
-        level: zlib.constants.Z_BEST_COMPRESSION
-    });
-
-    await pipeline(source, gz, createWriteStream(filePath));
+    await pipeline(source, createWriteStream(filePath));
 }
 
 void main().catch(err => console.error(err));

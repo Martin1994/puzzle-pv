@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Loader, LoaderResource, Texture } from "pixi.js";
-import { inflate } from "pako";
 import { from } from "es2018-linq";
 import { Sound, SoundLoader } from "@pixi/sound";
 
@@ -15,8 +14,8 @@ const textureList = {
 } as const;
 
 const binaryList = {
-    "volume": "puzzle.volume.gz",
-    "volume-in-band": "puzzle.volume-in-band.gz"
+    "volume": "puzzle.volume.bin",
+    "volume-in-band": "puzzle.volume-in-band.bin"
 } as const;
 
 const audioList = {
@@ -61,7 +60,6 @@ export async function load(): Promise<void> {
         if (!(resources![binaryKey as BinaryKey].data instanceof ArrayBuffer)) {
             throw new Error(`Resource ${binaryKey} is not binary data.`);
         }
-        resources![binaryKey as BinaryKey].data = inflate(resources![binaryKey as BinaryKey].data as ArrayBuffer).buffer;
     }
 }
 
