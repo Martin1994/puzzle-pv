@@ -1,3 +1,6 @@
+## Prepare assets
+Place all asset files defined in `src/assets.ts` under `static/assets/`.
+
 ## Prepare audio data
 
 ```shell
@@ -16,3 +19,17 @@ http://127.0.0.1:5001/
 To play from the middle:
 
 http://127.0.0.1:5001/?skip={seconds}
+
+## Build and bundle
+
+```shell
+npm run build
+```
+
+## Recording
+
+```shell
+npm run build && npm run dev
+```
+
+Output is under `./output/`.
