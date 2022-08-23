@@ -35,23 +35,6 @@ async function main(): Promise<void> {
 
     await saveZip(path.join(ASSETS_DIR, "puzzle.volume.gz"), volume);
     await saveZip(path.join(ASSETS_DIR, "puzzle.volume-in-band.gz"), volumeInBand);
-
-    // await fs.writeFile(path.join(ASSETS_DIR, "puzzle.volume.csv"), function* () {
-    //     for (const value of volume) {
-    //         yield value.toString();
-    //         yield "\n";
-    //     }
-    // }());
-
-    // await fs.writeFile(path.join(ASSETS_DIR, "puzzle.volume-in-band.csv"), function* () {
-    //     let counter = 0;
-    //     const halfWindow = FFT_WINDOW / 2;
-    //     for (const value of volumeInBand) {
-    //         counter++;
-    //         yield value.toString();
-    //         yield (counter % halfWindow) === 0 ? "\n" : ",";
-    //     }
-    // }());
 }
 
 function* iterateSpectrumPerFrame(audio: Float64Array): Iterable<Float64Array> {

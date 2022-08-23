@@ -63,7 +63,7 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
         "-tune", "animation",
         "-preset", "veryslow",
         "-vf", `scale=${WIDTH}:${HEIGHT},vflip`, // downscale + webgl's y axis is flipped
-        "output.mp4"
+        "output/puzzle.mp4"
     ], { stdio: ["pipe", "inherit", "inherit"] });
 
     const encoderEnd = new Promise(resolve => encoder.once("close", resolve));
@@ -90,7 +90,7 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
         lastUpdate = now;
     });
 
-    const totalFrame = new Float32Array(binary("volume")).length;
+    const totalFrame = 360; Math.min(new Float32Array(binary("volume")).length, 360);
 
     const renderer = app.renderer;
     if (!(renderer instanceof Renderer)) {
@@ -115,9 +115,12 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
     }
 
     await previousFrameEncoded;
+    frameStream.end();
     await encoderEnd;
 
     console.log("Encoder finished.");
+
+    process.exit(0);
 }
 
 async function play(skip: number, fpsCounter: HTMLElement): Promise<void> {

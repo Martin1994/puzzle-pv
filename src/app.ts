@@ -1,6 +1,6 @@
 import { Enumerable, from } from "es2018-linq";
 import { GlowFilter } from "pixi-filters";
-import { Application, Container, DisplayObject, IApplicationOptions, Rectangle, Sprite } from "pixi.js";
+import { Application, Container, DisplayObject, Graphics, IApplicationOptions, Rectangle, Sprite } from "pixi.js";
 import { load, text, texture } from "./assets";
 import { Clip } from "./display/clip";
 import { FloatingPuzzlePiece } from "./display/floatingPuzzlePiece";
@@ -31,12 +31,20 @@ export class PuzzleApp extends Application {
     }
 
     *#stageChildren(screen: Rectangle): Iterable<DisplayObject> {
+        const fadeIn = new Clip(-Infinity, 3000, 3000);
+        const fadeInBlock = new Graphics();
+        fadeInBlock.beginFill(0x000000);
+        fadeInBlock.drawRect(0, 0, screen.width, screen.height);
+        fadeIn.addChild(fadeInBlock);
+        yield fadeIn;
+
+
         yield* this.#lyricSection(screen);
         yield* this.#background(screen);
     }
 
     *#lyricSection(screen: Rectangle): Iterable<DisplayObject> {
-        const spectrum = new Clip(111200, 155000);
+        const spectrum = new Clip(114070, 157870);
         spectrum.addChild(new Spectrum(100, 2000));
         spectrum.x = screen.width * 0.9 - 450;
         spectrum.y = screen.height * 0.9;
@@ -47,7 +55,7 @@ export class PuzzleApp extends Application {
         lyrics.y = screen.height * 0.9;
         yield lyrics;
 
-        const presentsClip = new Clip(248000, Infinity);
+        const presentsClip = new Clip(250870, Infinity);
         const presents = new Sprite(texture("presents"));
         presents.scale.x = 0.7;
         presents.scale.y = 0.7;
@@ -61,10 +69,8 @@ export class PuzzleApp extends Application {
     }
 
     *#background(screen: Rectangle): Iterable<DisplayObject> {
-        const mikuScale = 0.3;
-
         const centrePiece = new FloatingPuzzlePiece();
-        centrePiece.scale.set(mikuScale, mikuScale);
+        centrePiece.scale.set(0.3, 0.3);
         centrePiece.x = screen.width * (0.5 - 0.0395);
         centrePiece.y = screen.height * (0.5 - 0.3255);
         yield centrePiece;
@@ -91,7 +97,6 @@ export class PuzzleApp extends Application {
 
         const miku = new Sprite(texture("miku"));
         miku.anchor.set(0.5);
-        miku.scale.set(mikuScale, mikuScale);
         miku.x = screen.width / 2;
         miku.y = screen.height / 2 + 50;
         yield miku;
@@ -102,7 +107,6 @@ export class PuzzleApp extends Application {
 
         const background = new Sprite(texture("background"));
         background.anchor.set(0.5);
-        background.scale.set(0.45, 0.45);
         background.x = screen.width / 2;
         background.y = screen.height / 2;
         yield background;

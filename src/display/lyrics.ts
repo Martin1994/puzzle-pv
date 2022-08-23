@@ -79,7 +79,7 @@ export class Lyrics extends Container {
         titleText.y = -150;
         titleText.text = title;
 
-        const firstTextBlockStart = from(this.#lines).zip(this.#timestamps).first(([line, _timestamp]) => line !== "")[1];
+        const firstTextBlockStart = from(this.#lines).zip(this.#timestamps).first()[1];
         const firstTextBlockEnd = from(this.#lines).zip(this.#timestamps).skipWhile(([line, _timestamp]) => line === "").first(([line, _timestamp]) => line === "")[1];
 
         const titleClip = new Clip(
@@ -92,7 +92,7 @@ export class Lyrics extends Container {
 
     #makeText(): Text {
         const style = new TextStyle({
-            fontFamily: ["lyric-font", "Noto Serif SC", "SimSum", "ST Song", "serif"],
+            fontFamily: ["lyric-font", "serif"],
             fontSize: 36,
             fontWeight: "bold",
             fill: ["#16677f", "#1e768d"],

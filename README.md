@@ -1,7 +1,7 @@
 ## Prepare audio data
 
 ```shell
-ffmpeg -i ./static/assets/puzzle.mp3 -f f64le -c:a pcm_f64le -ac 1 ./static/assets/puzzle.raw
+ffmpeg -i ./static/assets/puzzle.m4a -f f64le -c:a pcm_f64le -ac 1 ./static/assets/puzzle.raw
 npm run preprocess
 ```
 

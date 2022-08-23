@@ -20,7 +20,7 @@ const binaryList = {
 } as const;
 
 const audioList = {
-    "puzzle-music": "puzzle.mp3"
+    "puzzle-music": "puzzle.m4a"
 } as const;
 
 const textList = {

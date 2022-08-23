@@ -7,10 +7,11 @@ export class Clip extends Container {
 
     readonly #startMs: number;
     readonly #endMs: number;
+    readonly #transitionMs: number;
 
     #elapsedMs: number = 0;
 
-    public constructor(startMs: number, endMs: number, autoUpdate: boolean = true) {
+    public constructor(startMs: number, endMs: number, transitionMs: number = Clip.TRANSITION_MS, autoUpdate: boolean = true) {
         super();
 
         if (autoUpdate) {
@@ -19,6 +20,7 @@ export class Clip extends Container {
 
         this.#startMs = startMs;
         this.#endMs = endMs;
+        this.#transitionMs = transitionMs;
 
         this.visible = false;
         this.alpha = 0;
@@ -35,8 +37,8 @@ export class Clip extends Container {
         this.visible = true;
         this.alpha = Math.min(
             1,
-            (this.#elapsedMs - this.#startMs) / Clip.TRANSITION_MS,
-            (this.#endMs - this.#elapsedMs) / Clip.TRANSITION_MS
+            (this.#elapsedMs - this.#startMs) / this.#transitionMs,
+            (this.#endMs - this.#elapsedMs) / this.#transitionMs
         );
     }
 
