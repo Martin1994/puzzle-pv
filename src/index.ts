@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Application, Renderer, Ticker } from "pixi.js";
+import { Application, Renderer, Ticker, settings } from "pixi.js";
 import { PuzzleApp } from "./app";
 import { audio, binary } from "./assets";
 import { FRAME_RATE } from "./config";
@@ -18,6 +18,7 @@ async function main(): Promise<void> {
     Ticker.shared.autoStart = false;
     Ticker.shared.minFPS = 0;
 
+    settings.FILTER_RESOLUTION = RESOLUTION;
     const app = new PuzzleApp({
         width: WIDTH,
         height: HEIGHT,
