@@ -46,7 +46,9 @@ export class FloatingPuzzlePiece extends Container {
 
         const frame = Math.floor(this.#elapsedMs / 1000 * FRAME_RATE);
         const targetAlpha = (Math.log(this.#volume[frame]) - 15) / 25;
-        if (targetAlpha < this.#glow.alpha) {
+        if (this.#elapsedMs > 255500) {
+            this.#glow.alpha = 0;
+        } else if (targetAlpha < this.#glow.alpha) {
             this.#glow.alpha = targetAlpha + (this.#glow.alpha - targetAlpha) * Math.pow(FloatingPuzzlePiece.#GLOW_HALFLIFE_POW, deltaMs);
         } else {
             this.#glow.alpha = targetAlpha;

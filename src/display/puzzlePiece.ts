@@ -63,7 +63,7 @@ export class PuzzlePiece extends Sprite {
             this.glow.blendMode = BLEND_MODES.NORMAL;
             this.glow.alpha = 0.1;
         } else {
-            this.filters = [new GlowFilter({ distance: 50, outerStrength: 2 })];
+            this.filters = [new GlowFilter({ distance: 100, outerStrength: 3 })];
         }
     }
 

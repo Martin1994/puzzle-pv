@@ -18,7 +18,7 @@ async function main(): Promise<void> {
     Ticker.shared.autoStart = false;
     Ticker.shared.minFPS = 0;
 
-    settings.FILTER_RESOLUTION = RESOLUTION;
+    settings.FILTER_RESOLUTION = 2;
     const app = new PuzzleApp({
         width: WIDTH,
         height: HEIGHT,
@@ -59,7 +59,7 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
         "-r", `${FRAME_RATE}`,
         "-i", "pipe:0",
         "-c:v", "libx264",
-        "-crf", "18",
+        "-crf", "14",
         "-pix_fmt", "yuv420p",
         "-tune", "animation",
         "-preset", "veryslow",
@@ -77,7 +77,8 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
     const MSPF = 1000 / FRAME_RATE;
 
     let frame = 0;
-    let clock = Ticker.shared.lastTime = skip * 1000;
+    let clock = skip * 1000;
+    Ticker.shared.lastTime = clock - MSPF;
 
     let lastFpsFrame = 0;
     let lastUpdate = 0;
@@ -91,7 +92,7 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
         lastUpdate = now;
     });
 
-    const totalFrame = 360; Math.min(new Float32Array(binary("volume")).length, 360);
+    const totalFrame = new Float32Array(binary("volume")).length;
 
     const renderer = app.renderer;
     if (!(renderer instanceof Renderer)) {
@@ -119,7 +120,7 @@ async function record(skip:number, fpsCounter: HTMLElement, app: Application): P
     frameStream.end();
     await encoderEnd;
 
-    console.log("Encoder finished.");
+    process.stdout.write("Encoder finished.");
 
     process.exit(0);
 }
