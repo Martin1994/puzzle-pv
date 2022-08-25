@@ -44,7 +44,7 @@ export class PuzzleApp extends Application {
     }
 
     *#lyricSection(screen: Rectangle): Iterable<DisplayObject> {
-        const spectrum = new Clip(114070, 157870);
+        const spectrum = new Clip(114500, 157870);
         spectrum.addChild(new Spectrum(100, 2000));
         spectrum.x = screen.width * 0.9 - 450;
         spectrum.y = screen.height * 0.9;
@@ -97,6 +97,7 @@ export class PuzzleApp extends Application {
 
         const miku = new Sprite(texture("miku"));
         miku.anchor.set(0.5);
+        miku.scale.set(0.3, 0.3);
         miku.x = screen.width / 2;
         miku.y = screen.height / 2 + 50;
         yield miku;
@@ -107,6 +108,7 @@ export class PuzzleApp extends Application {
 
         const background = new Sprite(texture("background"));
         background.anchor.set(0.5);
+        background.scale.set(0.45, 0.45);
         background.x = screen.width / 2;
         background.y = screen.height / 2;
         yield background;
